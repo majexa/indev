@@ -18,12 +18,7 @@ class Indev extends GitBase {
     }
   }
 
-  function a() {
-    sys('php '.NGN_ENV_PATH.'/pm/pm.php localProjects cmd sflm/build', true);
-  }
-
   function done($force = false) {
-
     if (!$this->commit([], $force)) {
       output('Aborting "done" action');
       return;
