@@ -38,7 +38,15 @@ class Indev extends GitBase {
    * Комитит проекты, нуждающиеся в пуше или пуле
    */
   function reset($force = false) {
-    return $this->abstractConfirmAction([], 'commit', 'getNotCleanFolders', 'You trying to reset these projects', $force);
+    $folders = $this->getNotCleanFolders();
+    $confirm = $this->abstractConfirmAction([], 'reset', 'getNotCleanFolders', 'You trying to reset these projects', $force);
+    if ($confirm) {
+      foreach ($folders as $folder) {
+        chdir($folder);
+        `git checkout master`;
+      }
+    }
+    return $confirm;
   }
 
   /**
@@ -73,7 +81,7 @@ class Indev extends GitBase {
     if (!$force) {
       print "$confirmCaption:\n";
       $projectsInfoAction = $actionMethod.'Info';
-      $this->$projectsInfoAction($folders);
+      if (method_exists($this, $projectsInfoAction)) $this->$projectsInfoAction($folders);
       if (!Cli::confirm('Are you sure?')) return false;
     }
     foreach ($folders as $folder) {
@@ -101,6 +109,10 @@ class Indev extends GitBase {
     }
   }
 
+  protected function resetInfo(array $folders) {
+    $this->commitInfo($folders);
+  }
+
   protected function getNotCleanFoldersExceptingIssues($filter = []) {
     return array_filter($this->getNotCleanFolders($filter), function($folder) {
       return !Misc::hasPrefix('i-', (new GitFolder($folder))->wdBranch());
@@ -109,7 +121,8 @@ class Indev extends GitBase {
 
   protected function getNotCleanFolders($filter = []) {
     return array_filter($this->findGitFolders($filter), function($folder) {
-      return !(new GitFolder($folder))->isClean();
+      $gitFolder = new GitFolder($folder);
+      return !$gitFolder->isClean() or !$gitFolder->onBranch();
     });
   }
 
