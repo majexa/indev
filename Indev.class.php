@@ -35,7 +35,7 @@ class Indev extends GitBase {
   }
 
   /**
-   * Комитит проекты, нуждающиеся в пуше или пуле
+   * Резетит проекты до мастер-ветки и переключает на неё
    */
   function reset($force = false) {
     $folders = $this->getNotCleanFolders();
