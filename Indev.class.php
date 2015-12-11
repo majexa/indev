@@ -30,8 +30,8 @@ class Indev extends GitBase {
   /**
    * Комитит проекты, нуждающиеся в пуше или пуле
    */
-  function commit($projectsFilter = [], $force = false) {
-    return $this->abstractConfirmAction($projectsFilter, 'commit', 'getNotCleanFolders', 'You trying to commit these projects', $force);
+  function commit($force = false) {
+    return $this->abstractConfirmAction([], 'commit', 'getNotCleanFolders', 'You trying to commit these projects', $force);
   }
 
   /**
@@ -60,8 +60,8 @@ class Indev extends GitBase {
   /**
    * Синхронизирует изменения с ремоутом
    */
-  function push($projectsFilter = [], $force = false) {
-    return $this->abstractConfirmAction($projectsFilter, 'push', 'getChangedFolders', 'You trying to push these projects to all theirs remotes', $force);
+  function push($force = false) {
+    return $this->abstractConfirmAction([], 'push', 'getChangedFolders', 'You trying to push these projects to all theirs remotes', $force);
   }
 
   function deploy() {
